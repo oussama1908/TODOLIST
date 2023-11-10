@@ -32,9 +32,9 @@ return (
       
 
       {/* Admin routes */}
+      <Route path='/' element={<><Navbar type="user" /> <Login /></>} />
       <Route path="/LoginAdmin" element={<><Navbar type="admin" /> <LoginAdmin /></>} />
       <Route path="/ProfileAdmin" element={<><Navbar type="admin" /> <ProfileAdmin /></>} />
-
       {/* User routes */}
       <Route path="/profile" element={<><Navbar type="user" /> <Profile /></>} />
       <Route path="/login" element={<><Navbar type="user" /> <Login /></>} />
