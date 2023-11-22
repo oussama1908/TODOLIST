@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getUsers, deleteUser } from '../redux/slices/adminSlice';
+import NavbarAdmin from './NavbarAdmin'; // Import your NavbarAdmin component
 
 const ProfileAdmin = () => {
   const { isAdmin, USER } = useSelector((state) => state.admi);
@@ -12,7 +13,7 @@ const ProfileAdmin = () => {
     if (!isAdmin) {
       navigate('/LoginAdmin');
     }
-  }, [isAdmin]);
+  }, [isAdmin, navigate]);
 
   useEffect(() => {
     dispatch(getUsers());
@@ -23,14 +24,17 @@ const ProfileAdmin = () => {
   };
 
   return (
-    <div>
-      {USER && USER.map((el) => (
-        <div key={el._id}>
-          <h1>{el.name}</h1>
-          <button onClick={() => handleDeleteUser(el._id)}>Delete</button>
-        </div>
-      ))}
-    </div>
+    <>
+      <NavbarAdmin /> {/* Include your NavbarAdmin component here */}
+      <div>
+        {USER && USER.map((el) => (
+          <div key={el._id}>
+            <h1>{el.name}</h1>
+            <button onClick={() => handleDeleteUser(el._id)}>Delete</button>
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 

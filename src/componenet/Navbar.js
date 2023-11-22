@@ -1,58 +1,70 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
-import { logout } from '../redux/slices/userSlices';
+import React, { useRef, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { clearUser, logout } from "../redux/slices/userSlices";
+import "../componentstyles/navbarstyle.css";
 
-const Navbar = ({type}) => {
+const Navbar = ({ type, userName }) => {
   const { isAuth } = useSelector((state) => state.user);
   const { isAdmin } = useSelector((state) => state.admi);
-
-
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const userNameRef = useRef("");
+
+  useEffect(() => {
+    userNameRef.current = userName;
+  }, [userName]);
 
   const handleLogout = () => {
+    dispatch(clearUser());
     dispatch(logout());
+    navigate("/");
   };
 
   return (
-    <div>
-     { (type=="admin")?
-      (isAdmin)? 
-        // Check the 'type' parameter to determine the user type
-          // Admin Navbar
-          <>
-            <Link to="/ProfileAdmin">Admin Profile</Link>
-            <button onClick={handleLogout}>Log out</button>
-          </>
-         : 
-          // Regular User Navbar
-          <>
-           <Link to="/LoginAdmin">Login</Link>
-          {/* <Link to="/register">Register</Link> */}
-          </>    
-        
-        
-       : 
-       (isAuth)? 
-        // Check the 'type' parameter to determine the user type
-          // Admin Navbar
-          <>
-            <Link to="/profile">Profile</Link>
-            <button onClick={handleLogout}>Log out</button>
-          </>
-         : 
-          // Regular User Navbar
-          <>
-           <Link to="/login">Login</Link>
-           <Link to="/register">Register</Link> 
-          </>    
-       
-  
-      }
+    <div className="navbar-home">
+      <div className="navbar-left">
+        {isAuth && (
+          <div  className="navbar-todo">
+            TO DO LIST
+          </div>
+        )}
+        {!isAuth && type !== "admin" && (
+          <Link to="/" className="navbar-todo">
+            To-Do List
+          </Link>
+        )}
+        {isAdmin && (
+          <Link to="/profileAdmin" className="navbar-todo">
+            Admin Profile
+          </Link>
+        )}
       </div>
-
-  
+      <div className="navbar-right">
+        {isAuth && (
+          <>
+            <span className="navbar-link">Signed in as: {userName}</span>
+            <button
+              onClick={handleLogout}
+              className="navbar-link facebook-button"
+            >
+              Log out
+            </button>
+          </>
+        )}
+        {!isAuth && type !== "admin" && (
+          <>
+            <Link to="/login" className="navbar-link facebook-button">
+              Login
+            </Link>
+            <Link to="/register" className="navbar-link facebook-button">
+              Register
+            </Link>
+          </>
+        )}
+      </div>
+    </div>
   );
-    }
+};
 
 export default Navbar;

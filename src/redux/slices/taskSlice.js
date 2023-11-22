@@ -1,5 +1,8 @@
 import {createSlice,createAsyncThunk} from '@reduxjs/toolkit'
 import axios from "axios"
+import { logout } from './userSlices'; // Import the logout action from the userSlice
+
+
 export const  addtask=createAsyncThunk("/api/addtask",async(data,{rejectWithValue,dispatch})=>{
     try {
         const res= await axios.post("/task/post",data,{
@@ -42,22 +45,23 @@ export const deletetask = createAsyncThunk('/api/deletetask', async (taskId, { r
   });
   
  
-export const updateTask = createAsyncThunk('/api/updatetask', async (taskData, { rejectWithValue,dispatch }) => {
+  export const updateTask = createAsyncThunk('/api/updatetask', async (taskData, { rejectWithValue, dispatch }) => {
     try {
-        const { taskId, title, description, token } = taskData; 
-        console.log('Updating task with ID:', taskId);
-
-        const res = await axios.put(`/task/put/${taskId}`, { title, description }, {
-            headers: { token }, 
-        });
-        console.log(res);
-dispatch(gettask())
-        return res.data;
+      const { taskId, title, description, status,deadline,priority, token } = taskData; // Include status in the payload
+      console.log('status:', status);
+  
+      const res = await axios.put(`/task/put/${taskId}`, { title, description,deadline, status ,priority}, {
+        headers: { token },
+      });
+      console.log(res);
+      dispatch(gettask());
+      return res.data;
     } catch (error) {
-        console.error('Error updating task:', error);
-        return rejectWithValue(error.response.data.msg);
+      console.error('Error updating task:', error);
+      return rejectWithValue(error.response.data.msg);
     }
-});
+  });
+  
 
 
   
@@ -83,8 +87,7 @@ dispatch(gettask())
         [addtask.rejected]:(state,action)=>{
             state.isLoading=false
            
-            state.error=action.payload.error
-        },[gettask.pending]:(state)=>{
+state.error = action.payload;        },[gettask.pending]:(state)=>{
             state.isLoading=true
 
         },
@@ -135,9 +138,13 @@ dispatch(gettask())
           [updateTask.rejected]: (state, action) => {
             state.isLoading = false;
             state.error = action.payload;
+            
+          },
+          [logout]: (state) => {
+            // Clear task-related data when logging out
+            state.userdata = [];
           },
     }
 })
 
 export default taskSlice.reducer
-export const { logout } = taskSlice.actions; 

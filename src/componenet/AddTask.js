@@ -1,55 +1,63 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addtask } from '../redux/slices/taskSlice'; 
-
+import { addtask } from '../redux/slices/taskSlice';
+import "../componentstyles/addtask.css"
 const AddTask = () => {
-    // const [title,settitle]=useState() 
-    // const [title,setdesc]=useState() 
-    /// const hundlechange=()=>{
-    // 
-    //}
-    const dispatch = useDispatch();
-  const titleRef = useRef();
-  const descriptionRef = useRef();
+  const dispatch = useDispatch();
 
   const [taskData, setTaskData] = useState({
     title: '',
     description: '',
+    deadline: '',
   });
 
-  const handleAddTask = () => {
-    const title = titleRef.current.value;
-    const description = descriptionRef.current.value;
+  const handleInputChange = (e) => {
+    setTaskData({ ...taskData, [e.target.name]: e.target.value });
+  };
 
-    dispatch(addtask({ title, description }));
-
-    titleRef.current.value = '';
-    descriptionRef.current.value = '';
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(addtask(taskData));
     setTaskData({
       title: '',
       description: '',
+      deadline: '',
     });
   };
 
   return (
-    <div>
-      <h1>Add Task</h1>
-      <input
-      // onchange={(e)=>settitle(e.target.value)}
-        type="text"
-        placeholder="Title"
-        ref={titleRef}
-        value={taskData.title}
-        onChange={(e) => setTaskData({ ...taskData, title: e.target.value })}
-      />
-      <textarea
-        placeholder="Description"
-        ref={descriptionRef}
-        value={taskData.description}
-        onChange={(e) => setTaskData({ ...taskData, description: e.target.value })}
-      />
-      <button onClick={handleAddTask}>Add Task</button>
+    <div className='addtasksbackground'>
+      <h2>Add New Task</h2>
+      <form onSubmit={handleSubmit}>
+        <label>Title:</label>
+        <input
+          type="text"
+          name="title"
+          value={taskData.title}
+          onChange={handleInputChange}
+          className="title-style" 
+
+        />
+        <label>Description:</label>
+        <textarea
+          name="description"
+          value={taskData.description}
+          onChange={handleInputChange}
+          className="textarea-style" 
+
+        />
+        <label>Deadline:</label>
+        <input
+          type="date"
+          name="deadline"
+          value={taskData.deadline}
+          onChange={handleInputChange}
+          className="date-style" 
+
+        />
+        {/*  */}
+        <button className='button-addtask' type="submit">Add Task</button>
+      </form>
     </div>
   );
 };
